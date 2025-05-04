@@ -3,32 +3,39 @@ function Encrypt() {
     var newTxt = "";
     var pass = "";
     var alpha = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+    
+    // Check if the user selected "Use Password"
     if ($("#usePassword:checked").length > 0) {
         pass = prompt("Enter a password with no repeating letters").toUpperCase();
-        for (var i = 0; i <= pass.length - 1; i++) {
-            alpha.splice(alpha.indexOf(pass[i]), 1);
+        
+        if (pass && pass.length > 0) {
+            // Remove repeated letters in the password
+            pass = [...new Set(pass.split(''))].join('');
+            
+            // Modify the alphabet based on the password
+            for (var i = 0; i < pass.length; i++) {
+                alpha.splice(alpha.indexOf(pass[i]), 1);
+            }
+            for (var i = pass.length - 1; i >= 0; i--) {
+                alpha.unshift(pass[i]);
+            }
+        } else {
+            alert("Password is required.");
+            return;
         }
-        for (var i = pass.length - 1; i >= 0; i--) {
-            alpha.unshift(pass[i]);
-        }
-        console.log(alpha);
     }
-    for (var i = 0; i <= text.length - 1; i++) {
+    
+    // Encrypt the text
+    for (var i = 0; i < text.length; i++) {
         if (text[i] == " ") {
             newTxt += " ";
         } else {
-            var n = alpha.indexOf(text[i]) + 3;
-            if (text[i] == "X") {
-                n = 0;
+            var index = alpha.indexOf(text[i]);
+            if (index !== -1) {
+                var n = (index + 3) % 26;  // Shift by 3
+                var newAlpha = alpha[n];
+                newTxt += newAlpha;
             }
-            if (text[i] == "Y") {
-                n = 1;
-            }
-            if (text[i] == "Z") {
-                n = 2;
-            }
-            var newAlpha = alpha[n];
-            newTxt += newAlpha;
         }
     }
     $("#secretBox").html(newTxt);
@@ -37,33 +44,41 @@ function Encrypt() {
 function Decrypt() {
     var text = $("#message").val().toUpperCase();
     var newTxt = "";
+    var pass = "";
     var alpha = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+    
+    // Check if the user selected "Use Password"
     if ($("#usePassword:checked").length > 0) {
         pass = prompt("Enter a password with no repeating letters").toUpperCase();
-        for (var i = 0; i <= pass.length - 1; i++) {
-            alpha.splice(alpha.indexOf(pass[i]), 1);
+        
+        if (pass && pass.length > 0) {
+            // Remove repeated letters in the password
+            pass = [...new Set(pass.split(''))].join('');
+            
+            // Modify the alphabet based on the password
+            for (var i = 0; i < pass.length; i++) {
+                alpha.splice(alpha.indexOf(pass[i]), 1);
+            }
+            for (var i = pass.length - 1; i >= 0; i--) {
+                alpha.unshift(pass[i]);
+            }
+        } else {
+            alert("Password is required.");
+            return;
         }
-        for (var i = pass.length - 1; i >= 0; i--) {
-            alpha.unshift(pass[i]);
-        }
-        console.log(alpha);
     }
-    for (var i = 0; i <= text.length - 1; i++) {
+    
+    // Decrypt the text
+    for (var i = 0; i < text.length; i++) {
         if (text[i] == " ") {
             newTxt += " ";
         } else {
-            var n = alpha.indexOf(text[i]) - 3;
-            if (text[i] == "A") {
-                n = alpha.length - 1;
+            var index = alpha.indexOf(text[i]);
+            if (index !== -1) {
+                var n = (index - 3 + 26) % 26;  // Reverse shift by 3
+                var newAlpha = alpha[n];
+                newTxt += newAlpha;
             }
-            if (text[i] == "B") {
-                n = alpha.length - 2;
-            }
-            if (text[i] == "C") {
-                n = alpha.length - 3;
-            }
-            var newAlpha = alpha[n];
-            newTxt += newAlpha;
         }
     }
     $("#secretBox").html(newTxt);
